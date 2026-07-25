@@ -94,8 +94,15 @@ manual control:
 | `columns` | `number` | `5` | Number of stair columns. |
 | `background` | `string` | `'#000'` | Column color. |
 | `color` | `string` | `'#fff'` | Headline color. |
+| `blur` | `number` | `0` | Backdrop blur behind the columns, in px. Combine with `transparency` for frosted glass. |
+| `transparency` | `number` | `0` | Column transparency in percent: 0 = solid, 100 = fully transparent. |
 | `zIndex` | `number` | `50` | Overlay z-index. |
 | `absolute` | `boolean` | `false` | Position `absolute` instead of `fixed`, for embedding in a container. |
+
+```vue
+<!-- Frosted glass: the page shows through blurred columns -->
+<PreloStairs :blur="12" :transparency="40" />
+```
 
 ### Events
 

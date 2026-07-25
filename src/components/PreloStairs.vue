@@ -30,6 +30,13 @@ const props = withDefaults(
     background?: string
     /** Headline color. */
     color?: string
+    /**
+     * Backdrop blur behind the columns, in px. Combine with `transparency`
+     * for a frosted-glass look (invisible while the columns are solid).
+     */
+    blur?: number
+    /** Column transparency in percent: 0 = solid, 100 = fully transparent. */
+    transparency?: number
     /** z-index of the overlay. */
     zIndex?: number
     /** Position absolute instead of fixed, for embedding in a container. */
@@ -43,6 +50,8 @@ const props = withDefaults(
     columns: 5,
     background: '#000',
     color: '#fff',
+    blur: 0,
+    transparency: 0,
     zIndex: 50,
     absolute: false,
   },
@@ -91,11 +100,14 @@ const { rendered, leaving } = usePreloLifecycle({
     :class="{
       'prelo-stairs--leaving': leaving,
       'prelo-stairs--absolute': absolute,
+      'prelo-stairs--blur': blur > 0,
     }"
     :style="{
       'zIndex': zIndex,
       '--prelo-bg': background,
       '--prelo-color': color,
+      '--prelo-blur': `${blur}px`,
+      '--prelo-col-solid': `${100 - transparency}%`,
     }"
   >
     <div class="prelo-stairs__text">
@@ -143,7 +155,17 @@ const { rendered, leaving } = usePreloLifecycle({
   height: 100%;
   flex: 1 1 0%;
   background: var(--prelo-bg, #000);
+  background: color-mix(
+    in srgb,
+    var(--prelo-bg, #000) var(--prelo-col-solid, 100%),
+    transparent
+  );
   transition: height 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.prelo-stairs--blur .prelo-stairs__column {
+  -webkit-backdrop-filter: blur(var(--prelo-blur, 0px));
+  backdrop-filter: blur(var(--prelo-blur, 0px));
 }
 
 .prelo-stairs--leaving .prelo-stairs__column {
