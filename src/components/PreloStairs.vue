@@ -83,6 +83,16 @@ function columnExitDelay(index: number): string {
   return `${COLUMN_EXIT_BASE_DELAY + COLUMN_EXIT_STAGGER * (props.columns - 1 - index)}s`
 }
 
+/**
+ * The blur layer is one continuous element behind the columns (per-column
+ * backdrop-filters produce visible seams). Its fade-out spans the whole
+ * column collapse window.
+ */
+const backdropExitStyle = computed(() => ({
+  transitionDuration: `${COLUMN_EXIT_DURATION + COLUMN_EXIT_STAGGER * (props.columns - 1)}s`,
+  transitionDelay: `${COLUMN_EXIT_BASE_DELAY}s`,
+}))
+
 const { rendered, leaving } = usePreloLifecycle({
   modelValue: () => props.modelValue,
   duration: () => props.duration,
@@ -100,7 +110,6 @@ const { rendered, leaving } = usePreloLifecycle({
     :class="{
       'prelo-stairs--leaving': leaving,
       'prelo-stairs--absolute': absolute,
-      'prelo-stairs--blur': blur > 0,
     }"
     :style="{
       'zIndex': zIndex,
@@ -110,6 +119,11 @@ const { rendered, leaving } = usePreloLifecycle({
       '--prelo-col-solid': `${100 - transparency}%`,
     }"
   >
+    <div
+      v-if="blur > 0"
+      class="prelo-stairs__backdrop"
+      :style="backdropExitStyle"
+    />
     <div class="prelo-stairs__text">
       <slot>
         <h1 class="prelo-stairs__title">
@@ -163,9 +177,18 @@ const { rendered, leaving } = usePreloLifecycle({
   transition: height 0.5s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-.prelo-stairs--blur .prelo-stairs__column {
+.prelo-stairs__backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   -webkit-backdrop-filter: blur(var(--prelo-blur, 0px));
   backdrop-filter: blur(var(--prelo-blur, 0px));
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.prelo-stairs--leaving .prelo-stairs__backdrop {
+  opacity: 0;
 }
 
 .prelo-stairs--leaving .prelo-stairs__column {
@@ -215,6 +238,7 @@ const { rendered, leaving } = usePreloLifecycle({
 
 @media (prefers-reduced-motion: reduce) {
   .prelo-stairs__column,
+  .prelo-stairs__backdrop,
   .prelo-stairs__text {
     transition-duration: 0.01s;
     transition-delay: 0s !important;

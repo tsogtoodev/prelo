@@ -10,7 +10,12 @@ function play(variant: 'stairs' | 'words') {
 
 <template>
   <div>
-    <PreloStairs v-if="active === 'stairs'" :key="`stairs-${playKey}`" />
+    <PreloStairs
+      v-if="active === 'stairs'"
+      :key="`stairs-${playKey}`"
+      :blur="12"
+      :transparency="40"
+    />
     <PreloWords v-else-if="active === 'words'" :key="`words-${playKey}`" />
     <main class="landing">
       <p>Your crazy Landing page</p>
@@ -44,8 +49,25 @@ body {
   justify-content: center;
   gap: 1.5rem;
   min-height: 100dvh;
-  background: #fff;
-  color: #000;
+  color: #fff;
+  /* Busy test wallpaper: gradients + fine stripes make blur seams obvious. */
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgb(255 255 255 / 25%) 0 2px,
+      transparent 2px 14px
+    ),
+    radial-gradient(circle at 20% 30%, #ff6b6b, transparent 45%),
+    radial-gradient(circle at 80% 20%, #4ecdc4, transparent 45%),
+    radial-gradient(circle at 65% 80%, #ffe66d, transparent 40%),
+    radial-gradient(circle at 30% 75%, #a78bfa, transparent 45%),
+    linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.landing > p {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 40%);
 }
 
 .row {
