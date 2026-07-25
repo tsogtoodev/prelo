@@ -157,7 +157,3 @@ pnpm install
 pnpm dev        # Nuxt playground at http://localhost:3000
 pnpm build      # build the library to dist/
 ```
-
-## Credits
-
-The stairs animation is a port of [Skiper UI's stairs preloader](https://skiper-ui.com/v1/skiper9) to Vue.
